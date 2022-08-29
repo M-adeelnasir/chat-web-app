@@ -1,4 +1,6 @@
 import { createStore, applyMiddleware, combineReducers, } from 'redux'
+import { configureStore, createSlie } from '@reduxjs/toolkit';
+
 
 import thunk from 'redux-thunk'
 

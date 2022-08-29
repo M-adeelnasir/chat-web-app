@@ -2,6 +2,46 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const Register = () => {
+  const [state, setstate] = useState({
+    userName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    image: '',
+  });
+  const [preview, setPreview] = useState('');
+
+  const { userName, email, password, confirmPassword, image } = state;
+
+  const hanldeOnChange = (e) => {
+    setstate({
+      ...state,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const fileHendle = (e) => {
+    if (e.target.files.length !== 0) {
+      setstate({
+        ...state,
+        [e.target.name]: e.target.files[0],
+      });
+
+      setPreview(window.URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
+  const register = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('userName', userName);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('confirmPassword', confirmPassword);
+    formData.append('image', image);
+  };
+
   return (
     <div className="register">
       <div className="card">
@@ -10,12 +50,14 @@ const Register = () => {
         </div>
 
         <div className="card-body">
-          <form>
+          <form onSubmit={register}>
             <div className="form-group">
               <label htmlFor="username">User Name</label>
               <input
                 type="text"
+                onChange={hanldeOnChange}
                 name="userName"
+                value={state.userName}
                 className="form-control"
                 placeholder="User Name"
                 id="username"
@@ -26,7 +68,9 @@ const Register = () => {
               <label htmlFor="email">Email</label>
               <input
                 type="email"
+                onChange={hanldeOnChange}
                 name="email"
+                value={state.email}
                 className="form-control"
                 placeholder="Email"
                 id="email"
@@ -37,7 +81,9 @@ const Register = () => {
               <label htmlFor="password">Password</label>
               <input
                 type="password"
+                onChange={hanldeOnChange}
                 name="password"
+                value={state.password}
                 className="form-control"
                 placeholder="Password"
                 id="password"
@@ -48,7 +94,9 @@ const Register = () => {
               <label htmlFor="confirmPassword">Confirm Password</label>
               <input
                 type="password"
+                onChange={hanldeOnChange}
                 name="confirmPassword"
+                value={state.confirmPassword}
                 className="form-control"
                 placeholder="Confirm Password"
                 id="confirmPassword"
@@ -57,11 +105,14 @@ const Register = () => {
 
             <div className="form-group">
               <div className="file-image">
-                <div className="image"></div>
+                <div className="image">
+                  {preview ? <img src={preview} /> : ''}
+                </div>
                 <div className="file">
                   <label htmlFor="image">Select Image</label>
                   <input
                     type="file"
+                    onChange={fileHendle}
                     name="image"
                     className="form-control"
                     id="image"
