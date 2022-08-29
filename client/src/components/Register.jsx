@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 import { userRegister } from '../redux/actions/authActions';
 import { useDispatch } from 'react-redux';
@@ -36,7 +37,7 @@ const Register = () => {
     }
   };
 
-  const register = (e) => {
+  const register = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
@@ -46,7 +47,8 @@ const Register = () => {
     formData.append('confirmPassword', confirmPassword);
     formData.append('image', image);
 
-    dispatch(userRegister(formData));
+    const data = await axios.post('/api/v1/register', formData);
+    // dispatch(userRegister(formData));
   };
 
   return (
