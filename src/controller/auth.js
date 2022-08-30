@@ -3,6 +3,9 @@ const validator = require('validator');
 const User = require('../model/auth');
 const fs = require('fs');
 
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 exports.register = (req, res) => {
     try {
         const form = formidable()
@@ -72,14 +75,29 @@ exports.register = (req, res) => {
                         msg: "image upload failed"
                     })
                 }
+
+
             })
 
-            const user = await User.create({ name: userName, password: password, email: email, image: newPath })
-            console.log(user);
+            const user = await User.create({ name: userName, password: password, email: email, image: image.originalFilename })
 
-            res.status(201).json({
-                success: true,
-                user
+
+            const token = jwt.sign({
+                id: user._id,
+                email: user.email,
+                userName: user.userName,
+                image: user.image,
+                registerTime: user.createdAt
+            }, process.env.SECRET, {
+                expiresIn: process.env.TOKEN_EXP
+            });
+
+            const options = { expires: new Date(Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000) }
+
+            console.log(user, token);
+
+            res.status(201).cookie('authToken', token, options).json({
+                successMessage: 'Your Register Successful', token
             })
 
         })
